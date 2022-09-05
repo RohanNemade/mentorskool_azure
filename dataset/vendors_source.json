@@ -1,0 +1,32 @@
+{
+	"name": "vendors_source",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_LS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "vendors.csv",
+				"fileSystem": "landing-container"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "vendor_id",
+				"type": "String"
+			},
+			{
+				"name": "vendor_name",
+				"type": "String"
+			}
+		]
+	}
+}
