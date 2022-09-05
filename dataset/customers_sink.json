@@ -1,0 +1,16 @@
+{
+	"name": "customers_sink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQL_DB_LS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "",
+			"table": ""
+		}
+	}
+}
