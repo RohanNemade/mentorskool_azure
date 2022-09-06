@@ -46,6 +46,9 @@
 				]
 			}
 		],
+		"folder": {
+			"name": "NoSQL DB data loading pipeline"
+		},
 		"annotations": []
 	}
 }

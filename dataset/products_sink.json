@@ -5,6 +5,9 @@
 			"referenceName": "CosmosDb_LS",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "NoSQL DB sink"
+		},
 		"annotations": [],
 		"type": "CosmosDbSqlApiCollection",
 		"schema": {},
