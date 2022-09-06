@@ -85,9 +85,47 @@
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
-				"schema": [],
+				"schema": [
+					{
+						"name": "customer_id",
+						"type": "varchar"
+					},
+					{
+						"name": "customer_email",
+						"type": "varchar"
+					},
+					{
+						"name": "customer_name",
+						"type": "varchar"
+					},
+					{
+						"name": "segment",
+						"type": "varchar"
+					},
+					{
+						"name": "country",
+						"type": "varchar"
+					},
+					{
+						"name": "city",
+						"type": "varchar"
+					},
+					{
+						"name": "state",
+						"type": "varchar"
+					},
+					{
+						"name": "postal_code",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "region",
+						"type": "varchar"
+					}
+				],
 				"typeProperties": {
-					"schema": "global_mart",
+					"schema": "dbo",
 					"table": "customers"
 				}
 			},
