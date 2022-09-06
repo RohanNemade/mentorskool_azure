@@ -1,16 +1,19 @@
 {
-	"name": "customers_sink",
+	"name": "customers",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "SQL_DB_LS",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "SQL DB sink"
+		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [],
 		"typeProperties": {
-			"schema": "",
-			"table": ""
+			"schema": "global_mart",
+			"table": "customers"
 		}
 	}
 }
