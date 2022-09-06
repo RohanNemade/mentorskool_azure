@@ -1,5 +1,5 @@
 {
-	"name": "customers",
+	"name": "customers_sink",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "SQL_DB_LS",
