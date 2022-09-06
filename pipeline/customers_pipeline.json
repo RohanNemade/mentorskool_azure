@@ -49,7 +49,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "customers",
+						"referenceName": "customers_sink",
 						"type": "DatasetReference"
 					}
 				]
