@@ -29,6 +29,78 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/customers_pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "customers_pipeline",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "customers_source",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "customers",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/customers_source')]",
+				"[concat(variables('factoryId'), '/datasets/customers')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/products_pipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -84,6 +156,9 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"folder": {
+					"name": "NoSQL DB data loading pipeline"
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -92,7 +167,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/customers_sink')]",
+			"name": "[concat(parameters('factoryName'), '/customers')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -100,12 +175,15 @@
 					"referenceName": "SQL_DB_LS",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "SQL DB sink"
+				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
 				"typeProperties": {
-					"schema": "",
-					"table": ""
+					"schema": "global_mart",
+					"table": "customers"
 				}
 			},
 			"dependsOn": [
@@ -120,6 +198,9 @@
 				"linkedServiceName": {
 					"referenceName": "ADLS_LS",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "adls_raw_sources"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -186,6 +267,9 @@
 					"referenceName": "SQL_DB_LS",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "SQL DB sink"
+				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
@@ -203,6 +287,9 @@
 				"linkedServiceName": {
 					"referenceName": "ADLS_LS",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "adls_raw_sources"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -273,9 +360,55 @@
 					"referenceName": "CosmosDb_LS",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "NoSQL DB sink"
+				},
 				"annotations": [],
 				"type": "CosmosDbSqlApiCollection",
-				"schema": {},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"product_id": {
+							"type": "string"
+						},
+						"categories": {
+							"type": "string"
+						},
+						"brand": {
+							"type": "string"
+						},
+						"colors": {
+							"type": "string"
+						},
+						"dateAdded": {
+							"type": "string"
+						},
+						"dateUpdated": {
+							"type": "string"
+						},
+						"dimension": {
+							"type": "string"
+						},
+						"manufacturer": {
+							"type": "string"
+						},
+						"product_name": {
+							"type": "string"
+						},
+						"sizes": {
+							"type": "string"
+						},
+						"upc": {
+							"type": "string"
+						},
+						"weight": {
+							"type": "null"
+						},
+						"product_photos_qty": {
+							"type": "integer"
+						}
+					}
+				},
 				"typeProperties": {
 					"collectionName": "cosmos_container"
 				}
@@ -292,6 +425,9 @@
 				"linkedServiceName": {
 					"referenceName": "ADLS_LS",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "adls_raw_sources"
 				},
 				"annotations": [],
 				"type": "Json",
@@ -360,6 +496,9 @@
 					"referenceName": "SQL_DB_LS",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "SQL DB sink"
+				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
@@ -377,6 +516,9 @@
 				"linkedServiceName": {
 					"referenceName": "ADLS_LS",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "adls_raw_sources"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -415,6 +557,9 @@
 					"referenceName": "SQL_DB_LS",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "SQL DB sink"
+				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
@@ -432,6 +577,9 @@
 				"linkedServiceName": {
 					"referenceName": "ADLS_LS",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "adls_raw_sources"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -494,6 +642,9 @@
 					"referenceName": "SQL_DB_LS",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "SQL DB sink"
+				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
@@ -511,6 +662,9 @@
 				"linkedServiceName": {
 					"referenceName": "ADLS_LS",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "adls_raw_sources"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
