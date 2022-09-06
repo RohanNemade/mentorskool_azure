@@ -165,6 +165,9 @@
 				]
 			}
 		],
+		"folder": {
+			"name": "SQL DB data loading pipeline"
+		},
 		"annotations": []
 	}
 }

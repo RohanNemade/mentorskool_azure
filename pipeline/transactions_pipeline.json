@@ -1,9 +1,9 @@
 {
-	"name": "orders_pipeline",
+	"name": "transactions_pipeline",
 	"properties": {
 		"activities": [
 			{
-				"name": "orders_pipeline",
+				"name": "transactions_pipeline",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -49,110 +49,86 @@
 							},
 							{
 								"source": {
-									"name": "customer_id",
+									"name": "product_id",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "customer_id",
+									"name": "product_id",
 									"type": "String",
 									"physicalType": "varchar"
 								}
 							},
 							{
 								"source": {
-									"name": "vendor_id",
+									"name": "sales",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "vendor_id",
+									"name": "sales",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							},
+							{
+								"source": {
+									"name": "quantity",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "quantity",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "discount",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "discount",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							},
+							{
+								"source": {
+									"name": "profit",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "profit",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							},
+							{
+								"source": {
+									"name": "payment_type",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "payment_type",
 									"type": "String",
 									"physicalType": "varchar"
 								}
 							},
 							{
 								"source": {
-									"name": "ship_mode",
+									"name": "payment_installments",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "ship_mode",
-									"type": "String",
-									"physicalType": "varchar"
-								}
-							},
-							{
-								"source": {
-									"name": "order_status",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "order_status",
-									"type": "String",
-									"physicalType": "varchar"
-								}
-							},
-							{
-								"source": {
-									"name": "order_purchase_date",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "order_purchase_date",
-									"type": "DateTime",
-									"physicalType": "datetime"
-								}
-							},
-							{
-								"source": {
-									"name": "order_approved_at",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "order_approved_at",
-									"type": "DateTime",
-									"physicalType": "datetime"
-								}
-							},
-							{
-								"source": {
-									"name": "order_delivered_carrier_date",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "order_delivered_carrier_date",
-									"type": "DateTime",
-									"physicalType": "datetime"
-								}
-							},
-							{
-								"source": {
-									"name": "order_delivered_customer_date",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "order_delivered_customer_date",
-									"type": "DateTime",
-									"physicalType": "datetime"
-								}
-							},
-							{
-								"source": {
-									"name": "order_estimated_delivery_date",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "order_estimated_delivery_date",
-									"type": "DateTime",
-									"physicalType": "date"
+									"name": "payment_installments",
+									"type": "Int32",
+									"physicalType": "int"
 								}
 							}
 						],
@@ -165,21 +141,18 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "orders_source",
+						"referenceName": "transactions_source",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "orders_sink",
+						"referenceName": "transactions_sink",
 						"type": "DatasetReference"
 					}
 				]
 			}
 		],
-		"folder": {
-			"name": "SQL DB data loading pipeline"
-		},
 		"annotations": []
 	}
 }
