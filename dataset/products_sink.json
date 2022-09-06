@@ -10,7 +10,50 @@
 		},
 		"annotations": [],
 		"type": "CosmosDbSqlApiCollection",
-		"schema": {},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"product_id": {
+					"type": "string"
+				},
+				"categories": {
+					"type": "string"
+				},
+				"brand": {
+					"type": "string"
+				},
+				"colors": {
+					"type": "string"
+				},
+				"dateAdded": {
+					"type": "string"
+				},
+				"dateUpdated": {
+					"type": "string"
+				},
+				"dimension": {
+					"type": "string"
+				},
+				"manufacturer": {
+					"type": "string"
+				},
+				"product_name": {
+					"type": "string"
+				},
+				"sizes": {
+					"type": "string"
+				},
+				"upc": {
+					"type": "string"
+				},
+				"weight": {
+					"type": "null"
+				},
+				"product_photos_qty": {
+					"type": "integer"
+				}
+			}
+		},
 		"typeProperties": {
 			"collectionName": "cosmos_container"
 		}
