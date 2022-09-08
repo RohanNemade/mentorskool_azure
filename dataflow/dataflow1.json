@@ -1,0 +1,76 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "customers_sink",
+						"type": "DatasetReference"
+					},
+					"name": "customersSQL"
+				},
+				{
+					"dataset": {
+						"referenceName": "orders_sink",
+						"type": "DatasetReference"
+					},
+					"name": "ordersSQL"
+				},
+				{
+					"dataset": {
+						"referenceName": "transactions_sink",
+						"type": "DatasetReference"
+					},
+					"name": "transactionsSQL"
+				},
+				{
+					"name": "source4"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          customer_id as string,",
+				"          customer_email as string,",
+				"          customer_name as string,",
+				"          segment as string,",
+				"          country as string,",
+				"          city as string,",
+				"          state as string,",
+				"          postal_code as integer,",
+				"          region as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> customersSQL",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> ordersSQL",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> transactionsSQL",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false) ~> source4",
+				"customersSQL, ordersSQL join(customer_id == ERROR_FUNCTION(''),",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 aggregate() ~> aggregate1"
+			]
+		}
+	}
+}
