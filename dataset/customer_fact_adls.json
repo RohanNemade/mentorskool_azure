@@ -1,0 +1,42 @@
+{
+	"name": "customer_fact_adls",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_LS",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "adls_customer_ETL"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "customer-etl"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "customer_id",
+				"type": "String"
+			},
+			{
+				"name": "count_orders",
+				"type": "String"
+			},
+			{
+				"name": "amount_spent",
+				"type": "String"
+			},
+			{
+				"name": "count_returns",
+				"type": "String"
+			}
+		]
+	}
+}

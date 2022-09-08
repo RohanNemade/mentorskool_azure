@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "customer_fact_sql_adls",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -26,16 +26,43 @@
 					"name": "transactionsSQL"
 				},
 				{
-					"name": "source4"
+					"dataset": {
+						"referenceName": "returns_sink",
+						"type": "DatasetReference"
+					},
+					"name": "returnsSQL"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "customer_fact_adls",
+						"type": "DatasetReference"
+					},
+					"name": "aldsCustomerFactSink"
+				}
+			],
 			"transformations": [
 				{
 					"name": "join1"
 				},
 				{
-					"name": "aggregate1"
+					"name": "join2"
+				},
+				{
+					"name": "join3"
+				},
+				{
+					"name": "groupby"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "select3"
 				}
 			],
 			"scriptLines": [
@@ -54,22 +81,99 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> customersSQL",
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          order_id as string,",
+				"          customer_id as string,",
+				"          vendor_id as string,",
+				"          ship_mode as string,",
+				"          order_status as string,",
+				"          order_purchase_date as timestamp,",
+				"          order_approved_at as timestamp,",
+				"          order_delivered_carrier_date as timestamp,",
+				"          order_delivered_customer_date as timestamp,",
+				"          order_estimated_delivery_date as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> ordersSQL",
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          transaction_id as integer,",
+				"          order_id as string,",
+				"          product_id as string,",
+				"          sales as double,",
+				"          quantity as integer,",
+				"          discount as double,",
+				"          profit as double,",
+				"          payment_type as string,",
+				"          payment_installments as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> transactionsSQL",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source4",
-				"customersSQL, ordersSQL join(customer_id == ERROR_FUNCTION(''),",
+				"source(output(",
+				"          order_id as string,",
+				"          return_reason as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> returnsSQL",
+				"customersSQL, ordersSQL join(customersSQL@customer_id == ordersSQL@customer_id,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join1",
-				"join1 aggregate() ~> aggregate1"
+				"select1, transactionsSQL join(select1@order_id == transactionsSQL@order_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"select2, returnsSQL join(select2@order_id == returnsSQL@order_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join3",
+				"select3 aggregate(groupBy(customer_id),",
+				"     count_orders = count(count_orders),",
+				"          amount_spent = sum(amount_spent),",
+				"          count_returns = count(count_returns)) ~> groupby",
+				"join1 select(mapColumn(",
+				"          customer_id = customersSQL@customer_id,",
+				"          order_id",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"join2 select(mapColumn(",
+				"          customer_id,",
+				"          order_id = select1@order_id,",
+				"          sales",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"join3 select(mapColumn(",
+				"          customer_id,",
+				"          order_id = select2@order_id,",
+				"          amount_spent = sales,",
+				"          count_orders = returnsSQL@order_id,",
+				"          count_returns = return_reason",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"groupby sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          customer_id as string,",
+				"          count_orders as string,",
+				"          amount_spent as string,",
+				"          count_returns as string",
+				"     ),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> aldsCustomerFactSink"
 			]
 		}
 	}
