@@ -1,10 +1,6 @@
 {
 	"name": "returns_sink",
 	"properties": {
-		"linkedServiceName": {
-			"referenceName": "SQL_DB_LS",
-			"type": "LinkedServiceReference"
-		},
 		"folder": {
 			"name": "SQL DB sink"
 		},

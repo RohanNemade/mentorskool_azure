@@ -1,10 +1,6 @@
 {
 	"name": "customer_fact_adls",
 	"properties": {
-		"linkedServiceName": {
-			"referenceName": "ADLS_LS",
-			"type": "LinkedServiceReference"
-		},
 		"folder": {
 			"name": "adls_customer_ETL"
 		},
