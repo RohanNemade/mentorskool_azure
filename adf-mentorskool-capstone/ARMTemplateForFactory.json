@@ -319,9 +319,6 @@
 					"referenceName": "AzureSqlDatabase1",
 					"type": "LinkedServiceReference"
 				},
-				"folder": {
-					"name": "sql_datasets"
-				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [
@@ -494,6 +491,85 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/customer_sql_ds')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "customerID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "region",
+						"type": "varchar"
+					},
+					{
+						"name": "state",
+						"type": "varchar"
+					},
+					{
+						"name": "city",
+						"type": "varchar"
+					},
+					{
+						"name": "seller_type",
+						"type": "varchar"
+					},
+					{
+						"name": "owner",
+						"type": "varchar"
+					},
+					{
+						"name": "job",
+						"type": "varchar"
+					},
+					{
+						"name": "marital",
+						"type": "varchar"
+					},
+					{
+						"name": "education",
+						"type": "varchar"
+					},
+					{
+						"name": "default_",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "balance",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "hhinsurance",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "carloan",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "customers"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/customers_adls')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -578,88 +654,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/customers_sql_ds')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "sql_datasets"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "customerID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "region",
-						"type": "varchar"
-					},
-					{
-						"name": "state",
-						"type": "varchar"
-					},
-					{
-						"name": "city",
-						"type": "varchar"
-					},
-					{
-						"name": "seller_type",
-						"type": "varchar"
-					},
-					{
-						"name": "owner",
-						"type": "varchar"
-					},
-					{
-						"name": "job",
-						"type": "varchar"
-					},
-					{
-						"name": "marital",
-						"type": "varchar"
-					},
-					{
-						"name": "education",
-						"type": "varchar"
-					},
-					{
-						"name": "default_",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "balance",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "hhinsurance",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "carloan",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "customers"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/policy_adls')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -735,9 +729,6 @@
 				"linkedServiceName": {
 					"referenceName": "AzureSqlDatabase1",
 					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "sql_datasets"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -878,9 +869,6 @@
 				"linkedServiceName": {
 					"referenceName": "AzureSqlDatabase1",
 					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "sql_datasets"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
