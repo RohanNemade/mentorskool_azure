@@ -1,10 +1,6 @@
 {
 	"name": "products_sink",
 	"properties": {
-		"linkedServiceName": {
-			"referenceName": "CosmosDb_LS",
-			"type": "LinkedServiceReference"
-		},
 		"folder": {
 			"name": "NoSQL DB sink"
 		},
