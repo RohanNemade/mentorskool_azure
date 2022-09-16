@@ -7,9 +7,21 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adf-mentorskool-capstone"
 		},
-		"CosmosDb1_connectionString": {
+		"CosmosDb_ls_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'CosmosDb1'"
+			"metadata": "Secure string for 'connectionString' of 'CosmosDb_ls'"
+		},
+		"SQLDb_ls_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SQLDb_ls'"
+		},
+		"adlscapstone_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'adlscapstone'"
+		},
+		"adlscapstone_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://adlscapstone.dfs.core.windows.net/"
 		},
 		"containerUri": {
 			"type": "string",
@@ -38,8 +50,17 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"CosmosDb1_connectionString": {
-						"value": "[parameters('CosmosDb1_connectionString')]"
+					"CosmosDb_ls_connectionString": {
+						"value": "[parameters('CosmosDb_ls_connectionString')]"
+					},
+					"SQLDb_ls_connectionString": {
+						"value": "[parameters('SQLDb_ls_connectionString')]"
+					},
+					"adlscapstone_accountKey": {
+						"value": "[parameters('adlscapstone_accountKey')]"
+					},
+					"adlscapstone_properties_typeProperties_url": {
+						"value": "[parameters('adlscapstone_properties_typeProperties_url')]"
 					}
 				}
 			},

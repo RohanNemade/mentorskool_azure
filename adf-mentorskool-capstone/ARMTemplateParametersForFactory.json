@@ -5,8 +5,17 @@
 		"factoryName": {
 			"value": "adf-mentorskool-capstone"
 		},
-		"CosmosDb1_connectionString": {
+		"CosmosDb_ls_connectionString": {
 			"value": ""
+		},
+		"SQLDb_ls_connectionString": {
+			"value": ""
+		},
+		"adlscapstone_accountKey": {
+			"value": ""
+		},
+		"adlscapstone_properties_typeProperties_url": {
+			"value": "https://adlscapstone.dfs.core.windows.net/"
 		}
 	}
 }
