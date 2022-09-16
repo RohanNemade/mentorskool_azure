@@ -105,6 +105,78 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/cars_sql_ds')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "sql_datasets"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "car_id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "name",
+						"type": "varchar"
+					},
+					{
+						"name": "km_driven",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "fuel",
+						"type": "varchar"
+					},
+					{
+						"name": "transmission",
+						"type": "varchar"
+					},
+					{
+						"name": "mileage",
+						"type": "varchar"
+					},
+					{
+						"name": "engine",
+						"type": "varchar"
+					},
+					{
+						"name": "max_power",
+						"type": "varchar"
+					},
+					{
+						"name": "torque",
+						"type": "varchar"
+					},
+					{
+						"name": "seats",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "model",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "cars"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/claims_adls')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -300,6 +372,88 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/customers_sql_ds')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "sql_datasets"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "customerID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "region",
+						"type": "varchar"
+					},
+					{
+						"name": "state",
+						"type": "varchar"
+					},
+					{
+						"name": "city",
+						"type": "varchar"
+					},
+					{
+						"name": "seller_type",
+						"type": "varchar"
+					},
+					{
+						"name": "owner",
+						"type": "varchar"
+					},
+					{
+						"name": "job",
+						"type": "varchar"
+					},
+					{
+						"name": "marital",
+						"type": "varchar"
+					},
+					{
+						"name": "education",
+						"type": "varchar"
+					},
+					{
+						"name": "default_",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "balance",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "hhinsurance",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "carloan",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "customers"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/policy_adls')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -365,6 +519,73 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/policy_sql_ds')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "sql_datasets"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "policy_number",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "policy_bind_date",
+						"type": "date"
+					},
+					{
+						"name": "policy_state",
+						"type": "varchar"
+					},
+					{
+						"name": "policy_csl",
+						"type": "varchar"
+					},
+					{
+						"name": "policy_deductable",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "policy_annual_premium",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "umbrella_limit",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "car_id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "customer_id",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "policy"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
 			]
 		},
 		{
@@ -444,6 +665,82 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/sales_sql_ds')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "sql_datasets"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "sales_id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ad_placed_on",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "sold_on",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "selling_price",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "region",
+						"type": "varchar"
+					},
+					{
+						"name": "state",
+						"type": "varchar"
+					},
+					{
+						"name": "city",
+						"type": "varchar"
+					},
+					{
+						"name": "seller_type",
+						"type": "varchar"
+					},
+					{
+						"name": "owner",
+						"type": "varchar"
+					},
+					{
+						"name": "sold",
+						"type": "varchar"
+					},
+					{
+						"name": "car_id",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "sales"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -483,6 +780,19 @@
 				"typeProperties": {
 					"connectionString": "[parameters('CosmosDb1_connectionString')]"
 				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
 			},
 			"dependsOn": []
 		}
