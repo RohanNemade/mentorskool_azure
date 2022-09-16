@@ -1,10 +1,6 @@
 {
 	"name": "transactions_source",
 	"properties": {
-		"linkedServiceName": {
-			"referenceName": "ADLS_LS",
-			"type": "LinkedServiceReference"
-		},
 		"folder": {
 			"name": "adls_raw_sources"
 		},
