@@ -1,0 +1,62 @@
+{
+	"name": "policy_sql_ds",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "sql_datasets"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "policy_number",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "policy_bind_date",
+				"type": "varchar"
+			},
+			{
+				"name": "policy_state",
+				"type": "varchar"
+			},
+			{
+				"name": "policy_csl",
+				"type": "varchar"
+			},
+			{
+				"name": "policy_deductable",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "policy_annual_premium",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "umbrella_limit",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "car_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "customer_id",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "policy"
+		}
+	}
+}
