@@ -1,0 +1,71 @@
+{
+	"name": "sales_sql_ds",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLDb_ls",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "sql_datasets"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "sales_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ad_placed_on",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "sold_on",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "selling_price",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "region",
+				"type": "varchar"
+			},
+			{
+				"name": "state",
+				"type": "varchar"
+			},
+			{
+				"name": "city",
+				"type": "varchar"
+			},
+			{
+				"name": "seller_type",
+				"type": "varchar"
+			},
+			{
+				"name": "owner",
+				"type": "varchar"
+			},
+			{
+				"name": "sold",
+				"type": "varchar"
+			},
+			{
+				"name": "car_id",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "sales"
+		}
+	}
+}

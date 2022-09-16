@@ -1,0 +1,173 @@
+{
+	"name": "policy_copy_pipe",
+	"properties": {
+		"activities": [
+			{
+				"name": "policy_copy_pipe",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "policy_number",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "policy_number",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "policy_bind_date",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "policy_bind_date",
+									"type": "DateTime",
+									"physicalType": "date"
+								}
+							},
+							{
+								"source": {
+									"name": "policy_state",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "policy_state",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "policy_csl",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "policy_csl",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "policy_deductable",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "policy_deductable",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "policy_annual_premium",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "policy_annual_premium",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							},
+							{
+								"source": {
+									"name": "umbrella_limit",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "umbrella_limit",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "car_id",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "car_id",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "customer_id",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "customer_id",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "policy_bronze_ds",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "policy_sql_ds",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "sql_db_copy_pipes"
+		},
+		"annotations": []
+	}
+}
