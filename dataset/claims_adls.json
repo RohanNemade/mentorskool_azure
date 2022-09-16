@@ -1,0 +1,83 @@
+{
+	"name": "claims_adls",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "adls_datasets"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "claims.json",
+				"fileSystem": "bronze-raw-data"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"ClaimID": {
+					"type": "integer"
+				},
+				"incident_state": {
+					"type": "string"
+				},
+				"incident_city": {
+					"type": "string"
+				},
+				"incident_location": {
+					"type": "string"
+				},
+				"injury": {
+					"type": "number"
+				},
+				"property": {
+					"type": "number"
+				},
+				"vehicle": {
+					"type": "number"
+				},
+				"incident_date": {
+					"type": "string"
+				},
+				"incident_type": {
+					"type": "string"
+				},
+				"collision_type": {
+					"type": "string"
+				},
+				"incident_severity": {
+					"type": "string"
+				},
+				"authorities_contacted": {
+					"type": "string"
+				},
+				"number_of_vehicles_involved": {
+					"type": "integer"
+				},
+				"bodily_injuries": {
+					"type": "integer"
+				},
+				"witnesses": {
+					"type": "integer"
+				},
+				"police_report_available": {
+					"type": "string"
+				},
+				"Claim_Rejected": {
+					"type": "string"
+				},
+				"Claim_Logged_On": {
+					"type": "string"
+				},
+				"Claim_Processed_On": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
