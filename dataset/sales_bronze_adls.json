@@ -1,12 +1,12 @@
 {
-	"name": "sales_adls",
+	"name": "sales_bronze_adls",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDataLakeStorage1",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "adls_datasets"
+			"name": "adls_bronze_datasets"
 		},
 		"annotations": [],
 		"type": "DelimitedText",
