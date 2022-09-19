@@ -13,7 +13,480 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"name": "[concat(parameters('factoryName'), '/sales_copy_pipe')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "sales_copy_pipe",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "sales_id",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "sales_id",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "ad_placed_on",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ad_placed_on",
+											"type": "DateTime",
+											"physicalType": "datetime"
+										}
+									},
+									{
+										"source": {
+											"name": "sold_on",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "sold_on",
+											"type": "DateTime",
+											"physicalType": "datetime"
+										}
+									},
+									{
+										"source": {
+											"name": "selling_price",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "selling_price",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "Region",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "region",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "State",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "state",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "City",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "city",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "seller_type",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "seller_type",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "owner",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "owner",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "sold",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "sold",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "car_id",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "car_id",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "sales_bronze_ds",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "sales_sql_ds",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "sql_db_copy_pipes"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sales_fact_adls_to_synapse_copy')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "adls_to_synapse_copy",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlDWSink",
+								"allowCopyCommand": true,
+								"copyCommandSettings": {}
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "adlscapstone",
+									"type": "LinkedServiceReference"
+								},
+								"path": "synapse-staging"
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "model",
+											"type": "String"
+										},
+										"sink": {
+											"name": "model",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "number_of_cars_listed",
+											"type": "String"
+										},
+										"sink": {
+											"name": "number_of_cars_listed",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "numver_of_cars_sold",
+											"type": "String"
+										},
+										"sink": {
+											"name": "numver_of_cars_sold",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "net_revenue",
+											"type": "String"
+										},
+										"sink": {
+											"name": "net_revenue",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "avg_selling_time_after_ad_hrs",
+											"type": "String"
+										},
+										"sink": {
+											"name": "avg_selling_time_after_ad_hrs",
+											"type": "Single"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "sales_fact_adls_gold_ds",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "sales_fact_adf_synapse_ds",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sales_fact')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "cars_sql_ds",
+								"type": "DatasetReference"
+							},
+							"name": "carsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "sales_sql_ds",
+								"type": "DatasetReference"
+							},
+							"name": "salesSource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "sales_fact_adls_gold_ds",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "carsSelect"
+						},
+						{
+							"name": "salesSelect"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "timediffCol"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          car_id as integer,",
+						"          name as string,",
+						"          km_driven as integer,",
+						"          fuel as string,",
+						"          transmission as string,",
+						"          mileage as string,",
+						"          engine as string,",
+						"          max_power as string,",
+						"          torque as string,",
+						"          seats as integer,",
+						"          model as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> carsSource",
+						"source(output(",
+						"          sales_id as integer,",
+						"          ad_placed_on as timestamp,",
+						"          sold_on as timestamp,",
+						"          selling_price as integer,",
+						"          region as string,",
+						"          state as string,",
+						"          city as string,",
+						"          seller_type as string,",
+						"          owner as string,",
+						"          sold as string,",
+						"          car_id as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> salesSource",
+						"carsSource select(mapColumn(",
+						"          car_id,",
+						"          model",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> carsSelect",
+						"salesSource select(mapColumn(",
+						"          sales_id,",
+						"          ad_placed_on,",
+						"          sold_on,",
+						"          selling_price,",
+						"          sold,",
+						"          car_id",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> salesSelect",
+						"salesSelect, carsSelect join(salesSelect@car_id == carsSelect@car_id,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 select(mapColumn(",
+						"          ad_placed_on,",
+						"          sold_on,",
+						"          selling_price,",
+						"          sold,",
+						"          car_id = salesSelect@car_id,",
+						"          model",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"timediffCol aggregate(groupBy(model),",
+						"     number_of_cars_listed = count(car_id),",
+						"          numver_of_cars_sold = count(sold_on),",
+						"          net_revenue = sum(selling_price),",
+						"          avg_selling_time_after_ad_hrs = avg(selling_time_after_ad_hrs)) ~> aggregate1",
+						"select1 derive(selling_time_after_ad_hrs = (sold_on - ad_placed_on)/3600000) ~> timediffCol",
+						"aggregate1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          incident_state as string,",
+						"          count_of_claims as string,",
+						"          avg_loss_incurred as string,",
+						"          claim_rejection_percentage as string",
+						"     ),",
+						"     partitionFileNames:['sales_fact.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sales_fact_etl')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -56,7 +529,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/sales_fact')]"
+			]
 		}
 	]
 }

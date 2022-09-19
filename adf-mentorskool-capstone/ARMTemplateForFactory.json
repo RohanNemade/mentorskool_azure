@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'adlscapstone'"
 		},
+		"synapse_ls_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'synapse_ls'"
+		},
 		"adlscapstone_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://adlscapstone.dfs.core.windows.net/"
@@ -537,54 +541,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Data flow1",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "sales_fact",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"carsSource": {},
-									"salesSource": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/sales_fact')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/policy_copy_pipe')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -976,6 +932,181 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/sales_bronze_ds')]",
 				"[concat(variables('factoryId'), '/datasets/sales_sql_ds')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sales_fact_adls_to_synapse_copy')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "adls_to_synapse_copy",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlDWSink",
+								"allowCopyCommand": true,
+								"copyCommandSettings": {}
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "adlscapstone",
+									"type": "LinkedServiceReference"
+								},
+								"path": "synapse-staging"
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "model",
+											"type": "String"
+										},
+										"sink": {
+											"name": "model",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "number_of_cars_listed",
+											"type": "String"
+										},
+										"sink": {
+											"name": "number_of_cars_listed",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "numver_of_cars_sold",
+											"type": "String"
+										},
+										"sink": {
+											"name": "numver_of_cars_sold",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "net_revenue",
+											"type": "String"
+										},
+										"sink": {
+											"name": "net_revenue",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "avg_selling_time_after_ad_hrs",
+											"type": "String"
+										},
+										"sink": {
+											"name": "avg_selling_time_after_ad_hrs",
+											"type": "Single"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "sales_fact_adls_gold_ds",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "sales_fact_adf_synapse_ds",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sales_fact_adls_gold_ds')]",
+				"[concat(variables('factoryId'), '/datasets/sales_fact_adf_synapse_ds')]",
+				"[concat(variables('factoryId'), '/linkedServices/adlscapstone')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sales_fact_etl')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "sales_fact",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"carsSource": {},
+									"salesSource": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/sales_fact')]"
 			]
 		},
 		{
@@ -1615,6 +1746,55 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/sales_fact_adf_synapse_ds')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "synapse_ls",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "synapse_datasets"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "model",
+						"type": "varchar"
+					},
+					{
+						"name": "number_of_cars_listed",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "numver_of_cars_sold",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "net_revenue",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "avg_selling_time_after_ad_hrs",
+						"type": "float",
+						"precision": 15
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "sales_fact_adf"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/synapse_ls')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/sales_fact_adls_gold_ds')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1623,11 +1803,15 @@
 					"referenceName": "adlscapstone",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "adls_gold_datasets"
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "sales_fact.csv",
 						"fileSystem": "gold-fact-table-staging"
 					},
 					"columnDelimiter": ",",
@@ -1773,6 +1957,19 @@
 						"type": "SecureString",
 						"value": "[parameters('adlscapstone_accountKey')]"
 					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/synapse_ls')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('synapse_ls_connectionString')]"
 				}
 			},
 			"dependsOn": []
