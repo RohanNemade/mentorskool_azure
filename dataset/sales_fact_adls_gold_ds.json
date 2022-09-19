@@ -1,0 +1,39 @@
+{
+	"name": "sales_fact_adls_gold_ds",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "adlscapstone",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "gold-fact-table-staging"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "incident_state",
+				"type": "String"
+			},
+			{
+				"name": "count_of_claims",
+				"type": "String"
+			},
+			{
+				"name": "avg_loss_incurred",
+				"type": "String"
+			},
+			{
+				"name": "claim_rejection_percentage",
+				"type": "String"
+			}
+		]
+	}
+}
