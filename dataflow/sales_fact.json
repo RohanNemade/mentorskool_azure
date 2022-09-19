@@ -179,6 +179,7 @@
 				"          avg_loss_incurred as string,",
 				"          claim_rejection_percentage as string",
 				"     ),",
+				"     partitionFileNames:['sales_fact'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",

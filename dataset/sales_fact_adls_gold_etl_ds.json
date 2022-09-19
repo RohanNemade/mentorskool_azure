@@ -10,7 +10,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "sales_fact",
 				"fileSystem": "gold-fact-table-staging"
 			},
 			"columnDelimiter": ",",
