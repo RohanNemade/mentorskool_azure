@@ -13,49 +13,197 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/sales_fact')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"activities": [
-					{
-						"name": "Data flow1",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "cars_sql_ds",
+								"type": "DatasetReference"
+							},
+							"name": "carsSource"
 						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "sales_fact",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"carsSource": {},
-									"policySource": {},
-									"salesSource": {},
-									"sink1": {}
-								}
+						{
+							"dataset": {
+								"referenceName": "policy_sql_ds",
+								"type": "DatasetReference"
 							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
+							"name": "policySource"
+						},
+						{
+							"dataset": {
+								"referenceName": "sales_sql_ds",
+								"type": "DatasetReference"
 							},
-							"traceLevel": "Fine"
+							"name": "salesSource"
 						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "sales_fact_adls_gold_etl_ds",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "carsSelect"
+						},
+						{
+							"name": "policySelect"
+						},
+						{
+							"name": "salesSelect"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "join2"
+						},
+						{
+							"name": "select2"
+						},
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "newCol"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          car_id as integer,",
+						"          name as string,",
+						"          km_driven as integer,",
+						"          fuel as string,",
+						"          transmission as string,",
+						"          mileage as string,",
+						"          engine as string,",
+						"          max_power as string,",
+						"          torque as string,",
+						"          seats as integer,",
+						"          model as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> carsSource",
+						"source(output(",
+						"          policy_number as integer,",
+						"          policy_bind_date as date,",
+						"          policy_state as string,",
+						"          policy_csl as string,",
+						"          policy_deductable as integer,",
+						"          policy_annual_premium as double,",
+						"          umbrella_limit as integer,",
+						"          car_id as integer,",
+						"          customer_id as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> policySource",
+						"source(output(",
+						"          sales_id as integer,",
+						"          ad_placed_on as timestamp,",
+						"          sold_on as timestamp,",
+						"          selling_price as integer,",
+						"          region as string,",
+						"          state as string,",
+						"          city as string,",
+						"          seller_type as string,",
+						"          owner as string,",
+						"          sold as string,",
+						"          car_id as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> salesSource",
+						"carsSource select(mapColumn(",
+						"          car_id,",
+						"          model",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> carsSelect",
+						"policySource select(mapColumn(",
+						"          policy_number,",
+						"          car_id,",
+						"          customer_id",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> policySelect",
+						"salesSource select(mapColumn(",
+						"          sales_id,",
+						"          ad_placed_on,",
+						"          sold_on,",
+						"          selling_price,",
+						"          sold,",
+						"          car_id",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> salesSelect",
+						"carsSelect, policySelect join(carsSelect@car_id == policySelect@car_id,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 select(mapColumn(",
+						"          car_id = carsSelect@car_id,",
+						"          model,",
+						"          customer_id",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1, salesSelect join(select1@car_id == salesSelect@car_id,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join2",
+						"join2 select(mapColumn(",
+						"          car_id = select1@car_id,",
+						"          model,",
+						"          customer_id,",
+						"          ad_placed_on,",
+						"          sold_on,",
+						"          selling_price,",
+						"          sold",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select2",
+						"newCol aggregate(groupBy(model),",
+						"     number_of_cars_sold = count(car_id),",
+						"          net_revenue = sum(selling_price),",
+						"          number_of_customers = count(customer_id),",
+						"          avg_selling_time_after_placing_ad_hrs = avg(selling_time_after_placing_ad)) ~> aggregate1",
+						"select2 derive(selling_time_after_placing_ad = (sold_on-ad_placed_on)/(1000*3600)) ~> newCol",
+						"aggregate1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          incident_state as string,",
+						"          count_of_claims as string,",
+						"          avg_loss_incurred as string,",
+						"          claim_rejection_percentage as string",
+						"     ),",
+						"     partitionFileNames:['sales_fact.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink1"
+					]
+				}
 			},
 			"dependsOn": []
 		}
