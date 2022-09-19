@@ -537,6 +537,54 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "sales_fact",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"carsSource": {},
+									"salesSource": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/sales_fact')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/policy_copy_pipe')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1567,7 +1615,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/sales_fact_adls_gold_etl_ds')]",
+			"name": "[concat(parameters('factoryName'), '/sales_fact_adls_gold_ds')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1746,13 +1794,6 @@
 						},
 						{
 							"dataset": {
-								"referenceName": "policy_sql_ds",
-								"type": "DatasetReference"
-							},
-							"name": "policySource"
-						},
-						{
-							"dataset": {
 								"referenceName": "sales_sql_ds",
 								"type": "DatasetReference"
 							},
@@ -1762,7 +1803,7 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "sales_fact_adls_gold_etl_ds",
+								"referenceName": "sales_fact_adls_gold_ds",
 								"type": "DatasetReference"
 							},
 							"name": "sink1"
@@ -1771,9 +1812,6 @@
 					"transformations": [
 						{
 							"name": "carsSelect"
-						},
-						{
-							"name": "policySelect"
 						},
 						{
 							"name": "salesSelect"
@@ -1785,16 +1823,10 @@
 							"name": "select1"
 						},
 						{
-							"name": "join2"
-						},
-						{
-							"name": "select2"
-						},
-						{
 							"name": "aggregate1"
 						},
 						{
-							"name": "newCol"
+							"name": "timediffCol"
 						}
 					],
 					"scriptLines": [
@@ -1815,21 +1847,6 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> carsSource",
-						"source(output(",
-						"          policy_number as integer,",
-						"          policy_bind_date as date,",
-						"          policy_state as string,",
-						"          policy_csl as string,",
-						"          policy_deductable as integer,",
-						"          policy_annual_premium as double,",
-						"          umbrella_limit as integer,",
-						"          car_id as integer,",
-						"          customer_id as integer",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> policySource",
 						"source(output(",
 						"          sales_id as integer,",
 						"          ad_placed_on as timestamp,",
@@ -1853,13 +1870,6 @@
 						"     ),",
 						"     skipDuplicateMapInputs: false,",
 						"     skipDuplicateMapOutputs: false) ~> carsSelect",
-						"policySource select(mapColumn(",
-						"          policy_number,",
-						"          car_id,",
-						"          customer_id",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> policySelect",
 						"salesSource select(mapColumn(",
 						"          sales_id,",
 						"          ad_placed_on,",
@@ -1870,40 +1880,27 @@
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> salesSelect",
-						"carsSelect, policySelect join(carsSelect@car_id == policySelect@car_id,",
-						"     joinType:'left',",
+						"salesSelect, carsSelect join(salesSelect@car_id == carsSelect@car_id,",
+						"     joinType:'inner',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join1",
 						"join1 select(mapColumn(",
-						"          car_id = carsSelect@car_id,",
-						"          model,",
-						"          customer_id",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> select1",
-						"select1, salesSelect join(select1@car_id == salesSelect@car_id,",
-						"     joinType:'left',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> join2",
-						"join2 select(mapColumn(",
-						"          car_id = select1@car_id,",
-						"          model,",
-						"          customer_id,",
 						"          ad_placed_on,",
 						"          sold_on,",
 						"          selling_price,",
-						"          sold",
+						"          sold,",
+						"          car_id = salesSelect@car_id,",
+						"          model",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> select2",
-						"newCol aggregate(groupBy(model),",
-						"     number_of_cars_sold = count(car_id),",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"timediffCol aggregate(groupBy(model),",
+						"     number_of_cars_listed = count(car_id),",
+						"          numver_of_cars_sold = count(sold_on),",
 						"          net_revenue = sum(selling_price),",
-						"          number_of_customers = count(customer_id),",
-						"          avg_selling_time_after_placing_ad_hrs = avg(selling_time_after_placing_ad)) ~> aggregate1",
-						"select2 derive(selling_time_after_placing_ad = (sold_on-ad_placed_on)/(1000*3600)) ~> newCol",
+						"          avg_selling_time_after_ad = avg(selling_time_after_add)) ~> aggregate1",
+						"select1 derive(selling_time_after_add = (sold_on - ad_placed_on)/3600000) ~> timediffCol",
 						"aggregate1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -1924,46 +1921,9 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/cars_sql_ds')]",
-				"[concat(variables('factoryId'), '/datasets/policy_sql_ds')]",
 				"[concat(variables('factoryId'), '/datasets/sales_sql_ds')]",
-				"[concat(variables('factoryId'), '/datasets/sales_fact_adls_gold_etl_ds')]"
+				"[concat(variables('factoryId'), '/datasets/sales_fact_adls_gold_ds')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Data flow1",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": []
 		}
 	]
 }
