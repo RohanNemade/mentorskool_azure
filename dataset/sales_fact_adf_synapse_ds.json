@@ -1,0 +1,44 @@
+{
+	"name": "sales_fact_adf_synapse_ds",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "synapse_ls",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "synapse_datasets"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "model",
+				"type": "varchar"
+			},
+			{
+				"name": "number_of_cars_listed",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "numver_of_cars_sold",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "net_revenue",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "avg_selling_time_after_ad_hrs",
+				"type": "float",
+				"precision": 15
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "sales_fact_adf"
+		}
+	}
+}

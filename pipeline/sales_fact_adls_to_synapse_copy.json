@@ -1,0 +1,113 @@
+{
+	"name": "sales_fact_adls_to_synapse_copy",
+	"properties": {
+		"activities": [
+			{
+				"name": "adls_to_synapse_copy",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlDWSink",
+						"allowCopyCommand": true
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "adlscapstone",
+							"type": "LinkedServiceReference"
+						},
+						"path": "synapse-staging"
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "model",
+									"type": "String"
+								},
+								"sink": {
+									"name": "model",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "number_of_cars_listed",
+									"type": "String"
+								},
+								"sink": {
+									"name": "number_of_cars_listed",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "numver_of_cars_sold",
+									"type": "String"
+								},
+								"sink": {
+									"name": "numver_of_cars_sold",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "net_revenue",
+									"type": "String"
+								},
+								"sink": {
+									"name": "net_revenue",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "avg_selling_time_after_ad_hrs",
+									"type": "String"
+								},
+								"sink": {
+									"name": "avg_selling_time_after_ad_hrs",
+									"type": "Single"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "sales_fact_adls_gold_ds",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "sales_fact_adf_synapse_ds",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}

@@ -5,11 +5,15 @@
 			"referenceName": "adlscapstone",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "adls_gold_datasets"
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "sales_fact.csv",
 				"fileSystem": "gold-fact-table-staging"
 			},
 			"columnDelimiter": ",",
