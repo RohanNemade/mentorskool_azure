@@ -708,6 +708,50 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/sales_fact_adls_gold_etl_ds')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "adlscapstone",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "gold-fact-table-staging"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "incident_state",
+						"type": "String"
+					},
+					{
+						"name": "count_of_claims",
+						"type": "String"
+					},
+					{
+						"name": "avg_loss_incurred",
+						"type": "String"
+					},
+					{
+						"name": "claim_rejection_percentage",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/adlscapstone')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/sales_sql_ds')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -781,50 +825,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/SQLDb_ls')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/sales_fact_etl')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "adlscapstone",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileSystem": "gold-fact-table-staging"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "incident_state",
-						"type": "String"
-					},
-					{
-						"name": "count_of_claims",
-						"type": "String"
-					},
-					{
-						"name": "avg_loss_incurred",
-						"type": "String"
-					},
-					{
-						"name": "claim_rejection_percentage",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/adlscapstone')]"
 			]
 		},
 		{
@@ -1762,7 +1762,7 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "sales_fact_etl",
+								"referenceName": "sales_fact_adls_gold_etl_ds",
 								"type": "DatasetReference"
 							},
 							"name": "sink1"
@@ -1925,7 +1925,7 @@
 				"[concat(variables('factoryId'), '/datasets/cars_sql_ds')]",
 				"[concat(variables('factoryId'), '/datasets/policy_sql_ds')]",
 				"[concat(variables('factoryId'), '/datasets/sales_sql_ds')]",
-				"[concat(variables('factoryId'), '/datasets/sales_fact_etl')]"
+				"[concat(variables('factoryId'), '/datasets/sales_fact_adls_gold_etl_ds')]"
 			]
 		}
 	]
