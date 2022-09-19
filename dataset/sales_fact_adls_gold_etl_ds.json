@@ -1,5 +1,5 @@
 {
-	"name": "sales_fact_etl",
+	"name": "sales_fact_adls_gold_etl_ds",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "adlscapstone",

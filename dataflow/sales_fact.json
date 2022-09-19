@@ -29,7 +29,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "sales_fact_etl",
+						"referenceName": "sales_fact_adls_gold_etl_ds",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
